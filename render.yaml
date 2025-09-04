@@ -4,6 +4,7 @@ services:
     name: ml-cogni-backend
     env: python
     plan: starter
+    rootDir: backend
     buildCommand: |
       pip install -r Requirements.txt
     startCommand: python main.py
@@ -12,6 +13,8 @@ services:
         value: 3.11.0
       - key: PORT
         value: 8000
+      - key: DATABASE_URL
+        value: sqlite:///cibil_database.db
     healthCheckPath: /health
     autoDeploy: true
 
@@ -20,6 +23,7 @@ services:
     name: ml-cogni-frontend
     env: node
     plan: starter
+    rootDir: frontend
     buildCommand: |
       npm ci
       npm run build

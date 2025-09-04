@@ -1,179 +1,203 @@
-# ML Cogni - Deployment Guide
+# ML Cogni - Frontend Deployment Guide (Vercel)
 
-## 🐳 Local Docker Development
+## 🚀 Vercel Frontend Deployment
 
 ### Prerequisites
-- Docker Desktop installed and running
-- Git
+- GitHub account with your `cogni-ml` repository
+- Vercel account (free tier available)
+- Backend already deployed on Render at: `https://cogni-ml.onrender.com/`
 
-### Quick Start
-1. **Clone and navigate to project**
-   ```bash
-   cd ml_cogni
-   ```
+### Step-by-Step Vercel Deployment
 
-2. **Build and run with Docker Compose**
-   ```bash
-   docker-compose up --build
-   ```
+#### 1. **Sign up for Vercel**
+- Go to [vercel.com](https://vercel.com)
+- Sign up with your GitHub account
+- Authorize Vercel to access your repositories
 
-3. **Access the application**
-   - Frontend: http://localhost:3000
-   - Backend API: http://localhost:8000
-   - API Docs: http://localhost:8000/docs
+#### 2. **Import Your Project**
+- Click "New Project" on Vercel dashboard
+- Select your `adityaanikam/cogni-ml` repository
+- Choose "Import" to proceed
 
-### Individual Services
+#### 3. **Configure Project Settings**
+- **Framework Preset**: Next.js (auto-detected)
+- **Root Directory**: `frontend`
+- **Build Command**: `npm run build` (auto-detected)
+- **Output Directory**: `.next` (auto-detected)
+- **Install Command**: `npm install` (auto-detected)
+
+#### 4. **Environment Variables**
+Add these environment variables in Vercel dashboard:
+
+```
+NEXT_PUBLIC_API_URL=https://cogni-ml.onrender.com
+```
+
+**How to add:**
+- In project settings, go to "Environment Variables"
+- Add variable: `NEXT_PUBLIC_API_URL`
+- Value: `https://cogni-ml.onrender.com`
+- Environment: Production, Preview, Development (select all)
+
+#### 5. **Deploy**
+- Click "Deploy" button
+- Wait for build to complete (usually 2-3 minutes)
+- Your frontend will be live at a Vercel URL like: `https://cogni-ml-frontend.vercel.app`
+
+### Automatic Deployments
+- **Production**: Auto-deploys when you push to `main` branch
+- **Preview**: Auto-deploys for pull requests
+- **Custom Domains**: Can be added in project settings
+
+### Environment Configuration
+
+#### Production Environment Variables
+```
+NEXT_PUBLIC_API_URL=https://cogni-ml.onrender.com
+```
+
+#### Local Development
 ```bash
-# Backend only
-docker build -t ml-cogni-backend ./backend
-docker run -p 8000:8000 ml-cogni-backend
-
-# Frontend only
-docker build -t ml-cogni-frontend ./frontend
-docker run -p 3000:3000 ml-cogni-frontend
+# Create .env.local file in frontend directory
+NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
-## 🚀 Render Production Deployment
-
-### Backend Deployment
-1. **Connect your GitHub repo to Render**
-2. **Create a new Web Service**
-   - Name: `ml-cogni-backend`
-   - Environment: `Python`
-   - Build Command: `pip install -r Requirements.txt`
-   - Start Command: `python main.py`
-   - Health Check Path: `/health`
-
-3. **Environment Variables**
-   ```
-   PYTHON_VERSION=3.11.0
-   PORT=8000
-   ```
-
-### Frontend Deployment
-1. **Create another Web Service**
-   - Name: `ml-cogni-frontend`
-   - Environment: `Node`
-   - Build Command: `npm ci && npm run build`
-   - Start Command: `npm start`
-   - Health Check Path: `/`
-
-2. **Environment Variables**
-   ```
-   NODE_VERSION=18.0.0
-   NEXT_PUBLIC_API_URL=https://your-backend-service.onrender.com
-   PORT=3000
-   ```
-
-### Automatic Deployment
-- Both services will auto-deploy on Git push
-- Use the `render.yaml` file for infrastructure as code
-
-## 🔧 Environment Configuration
-
-### Backend (.env)
-```ini
-DATABASE_URL=sqlite:///cibil_database.db
+### File Structure for Vercel
 ```
-
-### Frontend (Environment Variables)
-```bash
-NEXT_PUBLIC_API_URL=http://localhost:8000  # Local
-NEXT_PUBLIC_API_URL=https://your-backend.onrender.com  # Production
-```
-
-## 📁 File Structure
-```
-ml_cogni/
-├── backend/
-│   ├── Dockerfile
-│   ├── main.py
-│   ├── Requirements.txt
-│   ├── *.pkl (ML models)
-│   ├── *.csv (training data)
-│   └── *.db (SQLite database)
-├── frontend/
-│   ├── Dockerfile
+cogni-ml/ (GitHub Repository)
+├── backend/ (Deployed on Render)
+├── frontend/ (Deploy to Vercel)
 │   ├── package.json
+│   ├── next.config.ts
 │   └── src/
-├── docker-compose.yml
-├── render.yaml
-└── .dockerignore
+└── README.md
 ```
+
+### Vercel Configuration
+- **Root Directory**: `frontend`
+- **Framework**: Next.js
+- **Node.js Version**: 18.x (auto-detected)
+- **Build Command**: `npm run build`
+- **Output Directory**: `.next`
 
 ## 🚨 Troubleshooting
 
 ### Common Issues
-1. **Port conflicts**: Change ports in docker-compose.yml
-2. **Build failures**: Check Requirements.txt and package.json
-3. **CORS errors**: Backend CORS is configured for all origins
-4. **Model loading**: Ensure all .pkl files are present
+
+#### 1. **Build Failures**
+- **ESLint Errors**: Already fixed with `eslint: { ignoreDuringBuilds: true }`
+- **Missing Dependencies**: Check `package.json` in frontend directory
+- **TypeScript Errors**: Check for type mismatches
+
+#### 2. **API Connection Issues**
+- **CORS Errors**: Backend CORS is configured for all origins
+- **Wrong API URL**: Verify `NEXT_PUBLIC_API_URL` is set correctly
+- **Backend Down**: Check if `https://cogni-ml.onrender.com/health` is accessible
+
+#### 3. **Environment Variables**
+- **Not Working**: Ensure variable name starts with `NEXT_PUBLIC_`
+- **Wrong Value**: Double-check the backend URL
+- **Not Set**: Add in Vercel dashboard under Environment Variables
 
 ### Health Checks
-- Backend: `GET /health`
-- Frontend: `GET /`
+- **Frontend**: `https://your-app.vercel.app/`
+- **Backend**: `https://cogni-ml.onrender.com/health`
 
-### Logs
+### Logs and Debugging
+- **Vercel Logs**: Check in Vercel dashboard under "Functions" tab
+- **Build Logs**: Available in deployment history
+- **Runtime Logs**: Check browser console for client-side errors
+
+## 🔧 Advanced Configuration
+
+### Custom Domain (Optional)
+1. **Add Domain**: In Vercel project settings, go to "Domains"
+2. **Configure DNS**: Add CNAME record pointing to Vercel
+3. **SSL**: Automatically provided by Vercel
+
+### Performance Optimization
+- **Image Optimization**: Next.js Image component automatically optimizes
+- **Static Generation**: Pages are pre-rendered for better performance
+- **CDN**: Vercel provides global CDN automatically
+
+### Monitoring
+- **Analytics**: Available in Vercel dashboard
+- **Speed Insights**: Performance monitoring
+- **Error Tracking**: Built-in error reporting
+
+## 📝 Deployment Checklist
+
+### Before Deployment
+- [ ] Backend is running on Render
+- [ ] Frontend code is pushed to GitHub
+- [ ] Environment variables are configured
+- [ ] ESLint errors are handled
+
+### After Deployment
+- [ ] Frontend is accessible at Vercel URL
+- [ ] API calls are working
+- [ ] No console errors
+- [ ] All features are functional
+
+## 🎯 Quick Commands
+
+### Local Development
 ```bash
-# Docker logs
-docker-compose logs backend
-docker-compose logs frontend
-
-# Render logs
-# Check in Render dashboard
+cd frontend
+npm install
+npm run dev
 ```
 
-## 🔄 CI/CD Pipeline
-
-### GitHub Actions (Optional)
-Create `.github/workflows/deploy.yml`:
-```yaml
-name: Deploy to Render
-on:
-  push:
-    branches: [main]
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - name: Deploy to Render
-        uses: johnbeynon/render-deploy-action@v0.0.1
-        with:
-          service-id: ${{ secrets.RENDER_SERVICE_ID }}
-          api-key: ${{ secrets.RENDER_API_KEY }}
+### Production Build Test
+```bash
+cd frontend
+npm run build
+npm start
 ```
 
-## 📊 Monitoring
+### Environment Variables
+```bash
+# Local development
+echo "NEXT_PUBLIC_API_URL=http://localhost:8000" > .env.local
 
-### Health Endpoints
-- Backend: `/health` - System status, models, database
-- Frontend: `/` - Application status
+# Production (set in Vercel dashboard)
+NEXT_PUBLIC_API_URL=https://cogni-ml.onrender.com
+```
 
-### Metrics
-- Model loading status
-- Database connectivity
-- API response times
-- Error rates
+## 📊 Success Indicators
 
-## 🔒 Security Notes
+### ✅ Deployment Successful
+- Build completes without errors
+- Frontend loads at Vercel URL
+- API calls return data
+- No console errors
+- All pages are accessible
 
-### Production Considerations
-1. **Environment Variables**: Never commit .env files
-2. **CORS**: Configure specific origins in production
-3. **Rate Limiting**: Implement API rate limiting
-4. **Authentication**: Add JWT or OAuth for production APIs
-5. **HTTPS**: Render provides SSL certificates automatically
+### ❌ Common Failures
+- Build fails due to TypeScript/ESLint errors
+- Environment variables not set
+- Backend API not accessible
+- CORS issues
+- Missing dependencies
 
-### Database
-- SQLite for development
-- PostgreSQL for production (update DATABASE_URL)
-- Regular backups of model files and data
+## 🔄 Updates and Maintenance
 
-## 📝 Notes
+### Automatic Updates
+- Push to `main` branch triggers automatic deployment
+- Pull requests create preview deployments
+- Environment variables persist across deployments
 
-- All ML models (.pkl) and data files (.csv, .db) are preserved
-- Claude-related files have been removed
-- Environment files are generated automatically in Docker
-- Frontend automatically connects to backend via environment variables
-- Health checks ensure services are ready before accepting traffic
+### Manual Updates
+- Change environment variables in Vercel dashboard
+- Redeploy from Vercel dashboard if needed
+- Check deployment logs for issues
+
+---
+
+**Your Backend URL**: `https://cogni-ml.onrender.com/`  
+**Frontend will be deployed to**: `https://your-app-name.vercel.app`
+
+**Next Steps**: 
+1. Push the updated `next.config.ts` to GitHub
+2. Follow the Vercel deployment steps above
+3. Test the connection between frontend and backend

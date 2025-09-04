@@ -18,7 +18,7 @@ const containerVariants = {
     opacity: 1,
     transition: {
       duration: 0.8,
-      ease: [0.25, 0.46, 0.45, 0.94] as const,
+      ease: [0.25, 0.46, 0.45, 0.94],
       staggerChildren: 0.1,
       delayChildren: 0.2
     }
@@ -37,7 +37,7 @@ const fadeSlideUpVariants = {
     filter: "blur(0px)",
     transition: {
       duration: 0.7,
-      ease: [0.25, 0.46, 0.45, 0.94] as const
+      ease: [0.25, 0.46, 0.45, 0.94]
     }
   }
 }
@@ -54,7 +54,7 @@ const textFadeVariants = {
     filter: "blur(0px)",
     transition: {
       duration: 0.6,
-      ease: [0.25, 0.46, 0.45, 0.94] as const
+      ease: [0.25, 0.46, 0.45, 0.94]
     }
   }
 }
@@ -63,12 +63,12 @@ const cardHoverVariants = {
   rest: { 
     scale: 1, 
     y: 0,
-    transition: { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] as const }
+    transition: { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }
   },
   hover: { 
     scale: 1.02, 
     y: -8,
-    transition: { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] as const }
+    transition: { duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }
   }
 }
 
